@@ -55,8 +55,8 @@ const sortArrays = (values) => {
   column_1 = new Set(column_1.sort((a, b) => a - b));
   column_2 = new Set(column_2.sort((a, b) => a - b));
 
-  // use column values as a lookup, placing each [color array] in correct order
-  // .. of [resulting array] containing all colors. (hard to explain)
+  // use column values as a lookup, placing each [color array] into 
+  // .. a containing array in accending order.
   column_0.forEach(item0 => {
     const f0 = (values.filter(value => value[0] === item0));
     column_1.forEach(item1 => {
