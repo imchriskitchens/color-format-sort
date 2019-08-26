@@ -10,6 +10,7 @@ const splitColors = (color) => {
   const isHSL = /^(hsl)\((\s*\d{1,3}\s*),(\s*\d{1,3}%\s*),(\s*\d{1,3}%\s*)\)$/;
 
   // label color format and split values into array 
+  if (color == undefined) return;
   let [format, ...values] = (isHEX.test(color)) ? ["HEX", isHEX.exec(color)] :
   (isRGB.test(color)) ? ["RGB", isRGB.exec(color)] :
   (isHSL.test(color)) ? ["HSL", isHSL.exec(color)] : '';
@@ -79,7 +80,8 @@ const groupFormats = () => {
     const sortFormats = (obj) => (obj.format === "HEX") ? hex.push(obj.values) :
       (obj.format === "RGB") ? rgb.push(obj.values) :
       (obj.format === "HSL") ? hsl.push(obj.values) : void 0;
-    sortFormats(splitColors(item));
+    const currentItem = splitColors(item);
+    if (currentItem != undefined) sortFormats(currentItem);
   });
 
   colorObjs.hex = sortArrays(colorObjs.hex);
