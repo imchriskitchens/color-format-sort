@@ -1,16 +1,18 @@
-const colorValues = ["rgb(17, 223, 207)", "#78CBB4", "#4FB79D", "hsl(166, 53%, 41%)", "#1B9077", "#0C7C66", "hsl(357, 68%, 58%)", "hsl(357, 61%, 51%)", "#BE2A31", "#A41E25", "#7F131A", "#500B10", "#D8814F", "rgb(83,104,114)", "rgb(54,69,79)", "rgb(178,216,216)", "rgb(0,76,76)", "hsl(22, 57%, 50%)", "#3E1F01", "hsl(38, 34%, 92%)", "rgb(217, 179, 72)", "#C49D21", "hsl(47, 100%, 28%)", "#5C4A00", "hsl(48, 100%, 5%)", "rgb(24, 235, 169)", "#99D971", "hsl(105, 53%, 51%)", "rgb(128, 43, 30)"];
-
+const colorValues = ["trash", "rgb(17, 223, 207)", undefined, null, "#78CBB4", "#4FB79D", "hsl(166, 53%, 41%)", "#1B9077", "#0C7C66", "hsl(357, 68%, 58%)", "hsl(357, 61%, 51%)", "#BE2A31", "#A41E25", "#7F131A", "#500B10", "#D8814F", "rgb(83,104,114)", "rgb(54,69,79)", "rgb(178,216,216)", "rgb(0,76,76)", "hsl(22, 57%, 50%)", "#3E1F01", "hsl(38, 34%, 92%)", "rgb(217, 179, 72)", "#C49D21", "hsl(47, 100%, 28%)", "#5C4A00", "hsl(48, 100%, 5%)", "rgb(24, 235, 169)", "#99D971", "hsl(105, 53%, 51%)", "rgb(128, 43, 30)"];
 
 const splitColors = (color) => {
   const isHEX = /^#?([A-F\d]{2})([A-F\d]{2})([A-F\d]{2})$/i;
   const isRGB = /^(rgb)\(\s*(-?\d+),\s*(-?\d+)\s*,\s*(-?\d+)\s*\)$/;
   const isHSL = /^(hsl)\((\s*\d{1,3}\s*),(\s*\d{1,3}%\s*),(\s*\d{1,3}%\s*)\)$/;
 
+  // label color format and split values into array 
   let [format, ...values] = (isHEX.test(color)) ? ["HEX", isHEX.exec(color)] :
   (isRGB.test(color)) ? ["RGB", isRGB.exec(color)] :
-  (isHSL.test(color)) ? ["HSL", isHSL.exec(color)] : '';
+  (isHSL.test(color)) ? ["HSL", isHSL.exec(color)] : [undefined, ""];
 
-  // remove irrelevant data
+  if (format == undefined) return;
+
+  // remove unnecessary data
   values = (format === "HEX") ? values[0].slice(1) : values[0].slice(2);
 
   // strip (%) from HSL data
@@ -27,9 +29,13 @@ const splitColors = (color) => {
     values = `0x${values.join("")}`;
     values = [(values >> 16) & 255, (values >> 8) & 255, values & 255];
   }
+
   // return as object 
   return { format, values };
 }
+// { format: 'HEX', values: [ 127, 19, 26 ] }
+// { format: 'RGB', values: [ 128, 43, 30 ] }
+// { format: 'HSL', values: [ 166, 53, 41 ] }
 
 
 const sortArrays = (values) => {
@@ -68,10 +74,13 @@ const groupFormats = () => {
   const { hex, rgb, hsl } = colorObjs;
 
   colorValues.forEach(item => {
-    const sortFormats = (obj) => (obj.format === "HEX") ? hex.push(obj.values) :
+    const sortFormats = (obj) =>
+      (obj.format === "HEX") ? hex.push(obj.values) :
       (obj.format === "RGB") ? rgb.push(obj.values) :
-      (obj.format === "HSL") ? hsl.push(obj.values) : void 0;
-    sortFormats(splitColors(item));
+      (obj.format === "HSL") ? hsl.push(obj.values) : "";
+
+    const currentItem = splitColors(item);
+    if (currentItem != undefined) sortFormats(currentItem);
   });
 
   colorObjs.hex = sortArrays(colorObjs.hex);
@@ -114,3 +123,7 @@ const formatResults = () => {
 }
 
 console.log(formatResults());
+
+
+
+//
